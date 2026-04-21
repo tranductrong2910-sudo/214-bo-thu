@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>214 Bộ Thủ Tiếng Trung - Floral Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&family=Noto+Sans+SC:wght@900&family=Pattaya&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Lexend', sans-serif; 
+            background: #fff5f7; 
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 228, 230, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(220, 252, 231, 0.5) 0px, transparent 50%);
+        }
+        .hanzi-font { font-family: 'Noto Sans SC', sans-serif; }
+        .fancy-title { font-family: 'Pattaya', sans-serif; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #fecdd3;
+            border-radius: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-card:hover {
+            border-color: #fb7185;
+            box-shadow: 0 15px 30px -10px rgba(251, 113, 133, 0.3);
+            transform: translateY(-5px) scale(1.05);
+            background: #ffffff;
+        }
+        .category-pill {
+            transition: all 0.3s;
+            cursor: pointer;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+        }
+        .category-pill.active {
+            background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+        }
+        .grid-bg {
+            background-image: radial-gradient(#fda4af 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        #writer-target svg { border-radius: 2rem; }
+        .flower-icon { display: inline-block; animation: rotate 10s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        /* Ẩn thanh cuộn nhưng vẫn cho phép cuộn */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .example-tag {
+            background: #fff1f2;
+            color: #475569; /* Slate 600 for text */
+            padding: 10px 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ffe4e6;
+        }
+        .example-char {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 1.8rem;
+            color: #e11d48; /* Rose 600 */
+            font-weight: 900;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-md border-b border-pink-100 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-rose-200">
+                        <span class="flower-icon">🌸</span>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black text-slate-900 fancy-title tracking-wide">214 Bộ Thủ Tiếng Trung</h1>
+                <p class="text-slate-400 text-xs mt-1">
+            By Trần Đức Trọng · 0374.524.556 <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" 
+             class="w-4 h-4 inline">
+        </p>
+    </div>
+
+</div>
+                <div class="relative w-full max-w-lg">
+                    <input type="text" id="searchInput" oninput="render()" placeholder="Tìm theo chữ, Hán Việt hoặc ý nghĩa..." 
+                        class="w-full pl-12 pr-6 py-4 bg-rose-50/50 border-2 border-rose-100 rounded-2xl text-lg focus:outline-none focus:ring-4 focus:ring-rose-200 focus:bg-white transition-all">
+                    <span class="absolute left-4 top-4 text-xl">🔍</span>
+                </div>
+            </div>
+            <div class="flex gap-3 overflow-x-auto py-6 no-scrollbar" id="catFilter">
+                <button onclick="setFilter('all')" id="btn-all" class="category-pill active border-2 border-rose-100 bg-white shadow-sm whitespace-nowrap">🌈 Tất cả</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 md:p-12">
+        <div id="mainGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"></div>
+    </main>
+
+    <!-- Details Modal -->
+    <div id="modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-rose-900/30 backdrop-blur-md" onclick="closeModal()"></div>
+        <!-- Thêm class no-scrollbar để ẩn thanh cuộn -->
+        <div class="bg-white rounded-[3rem] w-full max-w-xl p-8 md:p-12 relative z-10 shadow-2xl animate-in zoom-in duration-300 overflow-hidden border-4 border-white max-h-[100vh] overflow-y-auto no-scrollbar">
+            <div class="absolute -top-10 -right-10 text-8xl opacity-10 rotate-12">🌸</div>
+            
+            <div class="flex flex-col items-center">
+                <div class="grid-bg w-48 h-48 border-4 border-rose-50 rounded-[2.5rem] flex items-center justify-center mb-6 relative bg-white shadow-inner">
+                    <div id="writer-target"></div>
+                </div>
+                
+                <div class="text-center mb-6">
+                    <div id="mPinyin" class="text-rose-500 font-black text-lg tracking-[0.3em] mb-2 uppercase"></div>
+                    <h2 id="mHV" class="text-6xl font-black text-slate-900 mb-2 fancy-title"></h2>
+                    <p id="mMean" class="text-slate-500 font-bold text-xl"></p>
+                </div>
+
+                <div class="w-full space-y-4">
+                    <div class="bg-rose-50/50 p-5 rounded-3xl border-2 border-rose-100">
+                        <span class="text-xs font-black text-rose-400 uppercase tracking-widest block mb-2 flex items-center gap-2">
+                            <span>✨</span> GIẢI THÍCH <span>✨</span>
+                        </span>
+                        <p id="mDesc" class="text-md text-slate-700 leading-relaxed font-medium italic"></p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-3xl border-2 border-slate-100 shadow-sm">
+                        <span class="text-xs font-black text-slate-400 uppercase tracking-widest block mb-3 flex items-center gap-2">
+                            <span>📚</span> VÍ DỤ TỪ VỰNG <span>📚</span>
+                        </span>
+                        <div id="mExamples" class="flex flex-col gap-2"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 w-full mt-8">
+                    <button onclick="writer.animateCharacter()" class="bg-slate-800 text-white py-4 rounded-2xl text-sm font-black uppercase hover:bg-slate-900 transition-colors">✍️ Viết lại</button>
+                    <button id="btnCharSpeak" class="bg-rose-500 text-white py-4 rounded-2xl text-sm font-black uppercase shadow-lg hover:bg-rose-600 transition-colors">🎵 Phát âm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = {
+            "nature": "🌿 Thiên nhiên",
+            "human": "👧 Con người",
+            "animal": "🐾 Động vật",
+            "plant": "🌻 Thực vật",
+            "object": "🎁 Đồ vật",
+            "abstract": "✨ Trừu tượng"
+        };
+
+        const radicalsRaw = [
+            ["一", "yī", "Nhất", "Số một", "abstract", "Chữ nhất, biểu thị số 1 hoặc sự thống nhất.", ["单一 (dānyī): đơn nhất", "一致 (yīzhì): nhất trí"]],
+            ["丨", "gǔn", "Cổn", "Nét sổ", "abstract", "Nét vạch từ trên xuống dưới.", ["中 (zhōng): trung (giữa)", "个 (gè): cái/chiếc"]],
+            ["丶", "zhǔ", "Chủ", "Điểm", "abstract", "Một dấu chấm, điểm dừng.", ["主 (zhǔ): chủ nhân", "丸 (wán): viên thuốc"]],
+            ["丿", "piě", "Phiệt", "Nét phẩy", "abstract", "Nét gạt sang trái.", ["九 (jiǔ): số chín", "及 (jí): kịp thời"]],
+            ["乙", "yǐ", "Ất", "Vị trí thứ 2", "abstract", "Vị trí thứ hai trong thiên can.", ["艺术 (yìshù): nghệ thuật", "乾 (qián): quẻ càn"]],
+            ["亅", "jué", "Quyết", "Nét móc", "abstract", "Nét sổ có móc ở cuối.", ["了 (le): rồi", "事 (shì): sự việc"]],
+            ["二", "èr", "Nhị", "Số hai", "abstract", "Số hai, sự đối lập hoặc thăng bằng.", ["二十 (èrshí): hai mươi", "二月 (èryuè): tháng hai"]],
+            ["亠", "tóu", "Đầu", "Phần trên", "object", "Thường nằm ở đầu chữ, không có nghĩa riêng rõ rệt.", ["京 (jīng): kinh đô", "夜 (yè): ban đêm"]],
+            ["人", "rén", "Nhân", "Người", "human", "Hình dáng con người đang đứng.", ["人民 (rénmín): nhân dân", "他人 (tārén): người khác"]],
+            ["亻", "rén", "Nhân đứng", "Người", "human", "Biến thể bộ Nhân khi đứng bên trái.", ["你 (nǐ): bạn", "他 (tā): anh ấy"]],
+            ["儿", "ér", "Nhi", "Trẻ con", "human", "Hình dáng đứa trẻ hoặc đôi chân.", ["儿子 (érzi): con trai", "女儿 (nǚ'ér): con gái"]],
+            ["入", "rù", "Nhập", "Vào", "abstract", "Đi vào, gia nhập.", ["进入 (jìnrù): đi vào", "入口 (rùkǒu): lối vào"]],
+            ["八", "bā", "Bát", "Số tám", "abstract", "Số tám, hoặc sự chia rẽ.", ["八点 (bādiǎn): 8 giờ", "公 (gōng): công cộng"]],
+            ["冂", "jiōng", "Quynh", "Vùng biên", "nature", "Vùng biên giới, xa xôi.", ["同 (tóng): cùng nhau", "网 (wǎng): cái lưới"]],
+            ["冖", "mì", "Mịch", "Trùm khăn", "object", "Cái khăn che lên đồ vật.", ["冤 (yuān): oan uổng", "冠 (guān): cái mũ"]],
+            ["冫", "bīng", "Băng", "Nước đá", "nature", "Liên quan đến độ lạnh, băng giá.", ["冰 (bīng): băng", "冷 (lěng): lạnh"]],
+            ["几", "jī", "Kỷ", "Cái ghế", "object", "Cái ghế dựa hoặc cái bàn nhỏ.", ["桌几 (zhuōjī): bàn nhỏ", "茶几 (chájī): bàn trà"]],
+            ["凵", "qiǔ", "Khảm", "Há miệng", "human", "Vật đựng hoặc miệng đang mở.", ["凶 (xiōng): hung dữ", "出 (chū): ra ngoài"]],
+            ["刀", "dāo", "Đao", "Con dao", "object", "Vũ khí sắc nhọn, sự chia cắt.", ["大刀 (dàdāo): đại đao", "剪刀 (jiǎndāo): cái kéo"]],
+            ["刂", "dāo", "Đao (biến)", "Con dao", "object", "Biến thể bộ Đao nằm bên phải.", ["利 (lì): lợi ích", "刻 (kè): khắc"]],
+            ["力", "lì", "Lực", "Sức mạnh", "abstract", "Hình cái cày, biểu thị sức lực.", ["努力 (nǔlì): nỗ lực", "力量 (lìliàng): sức mạnh"]],
+            ["勹", "bāo", "Bao", "Bao bọc", "object", "Hình người đang khom lưng ôm vật gì đó.", ["包 (bāo): bao túi", "勺 (sháo): cái thìa"]],
+            ["匕", "bǐ", "Chủy", "Cái thìa", "object", "Cái muỗng hoặc con dao găm.", ["北 (běi): hướng bắc", "比较 (bǐjiào): so sánh"]],
+            ["匚", "fāng", "Phương", "Tủ đựng", "object", "Cái hộp, vật đựng đồ.", ["匡 (kuāng): giúp đỡ", "匠 (jiàng): thợ"]],
+            ["十", "shí", "Thập", "Số mười", "abstract", "Số mười, sự đầy đủ.", ["十分 (shífēn): rất/mười phần", "十字 (shízì): chữ thập"]],
+            ["卜", "bǔ", "Bốc", "Bói toán", "abstract", "Vết nứt trên mai rùa khi bói.", ["占卜 (zhānbǔ): bói toán", "卧 (wò): nằm"]],
+            ["卩", "jié", "Tiết", "Đốt tre", "plant", "Đốt tre hoặc quỳ gối.", ["节日 (jiérì): ngày lễ", "印 (yìn): ấn loát"]],
+            ["厂", "hán", "Hán", "Sườn núi", "nature", "Vách đá, nơi con người ở.", ["工厂 (gōngchǎng): công xưởng", "由于 (yóuyú): do là"]],
+            ["厶", "sī", "Khứ", "Riêng tư", "abstract", "Cái cày hoặc việc riêng cá nhân.", ["参 (cān): tham gia", "去 (qù): đi"]],
+            ["又", "yòu", "Hựu", "Lại một lần", "abstract", "Bàn tay phải, lặp lại hành động.", ["又是 (yòushì): lại là", "友好 (yǒuhǎo): hữu hảo"]],
+            ["口", "kǒu", "Khẩu", "Cái miệng", "human", "Hình cái miệng con người.", ["开口 (kāikǒu): mở miệng", "口气 (kǒuqì): khẩu khí"]],
+            ["囗", "wéi", "Vi", "Vây quanh", "abstract", "Vòng ngoài bao quanh.", ["国家 (guójiā): quốc gia", "园 (yuán): vườn"]],
+            ["土", "tǔ", "Thổ", "Đất", "nature", "Mầm cây mọc trên mặt đất.", ["土地 (tǔdì): đất đai", "泥土 (nítǔ): bùn đất"]],
+            ["士", "shì", "Sĩ", "Kẻ sĩ", "human", "Người có học, nam giới.", ["硕士 (shuòshì): thạc sĩ", "战士 (zhànshì): chiến sĩ"]],
+            ["夂", "zhǐ", "Truy", "Đến sau", "abstract", "Dáng vẻ đi chậm từ phía sau.", ["处 (chù): nơi chốn", "冬 (dōng): mùa đông"]],
+            ["夊", "suī", "Tuy", "Đi chậm", "abstract", "Dáng đi khoan thai.", ["复 (fù): lặp lại", "夏 (xià): mùa hè"]],
+            ["夕", "xī", "Tịch", "Chiều tối", "nature", "Mặt trăng mới mọc nửa hình.", ["夕阳 (xīyáng): tịch dương", "除夕 (chúxī): đêm giao thừa"]],
+            ["大", "dà", "Đại", "Lớn", "abstract", "Hình người dang rộng hai tay.", ["大人 (dàrén): người lớn", "大家 (dàjiā): mọi người"]],
+            ["女", "nǚ", "Nữ", "Phụ nữ", "human", "Người phụ nữ khom lưng.", ["女人 (nǚrén): đàn bà", "女儿 (nǚ'ér): con gái"]],
+            ["子", "zǐ", "Tử", "Con cái", "human", "Đứa trẻ sơ sinh.", ["孩子 (háizi): trẻ con", "叶子 (yèzi): lá cây"]],
+            ["宀", "mián", "Miên", "Mái nhà", "object", "Mái che của ngôi nhà.", ["家 (jiā): nhà", "安 (ān): an toàn"]],
+            ["寸", "cùn", "Thốn", "Tấc", "abstract", "Đơn vị đo chiều dài, quy tắc.", ["尺寸 (chǐcùn): kích thước", "寻 (xún): tìm kiếm"]],
+            ["小", "xiǎo", "Tiểu", "Nhỏ", "abstract", "Sự vật nhỏ bé, chia nhỏ.", ["小时 (xiǎoshí): giờ", "小姐 (xiǎojiě): cô gái"]],
+            ["尢", "wāng", "Uông", "Yếu đuối", "human", "Người có chân bị tật.", ["尤 (yóu): đặc biệt", "就 (jiù): chính là"]],
+            ["尸", "shī", "Thi", "Xác chết", "human", "Hình dáng cơ thể hoặc địa điểm.", ["尸体 (shíbǐ): thi thể", "屋 (wū): gian phòng"]],
+            ["屮", "chè", "Triệt", "Mầm non", "plant", "Cỏ mới mọc lên.", ["屯 (tún): đồn trú", "山 (shān): núi"]],
+            ["山", "shān", "Sơn", "Núi", "nature", "Hình ba ngọn núi.", ["山脉 (shānmài): dãy núi", "登山 (dēngshān): leo núi"]],
+            ["巛", "chuān", "Xuyên", "Sông ngòi", "nature", "Dòng nước chảy mạnh.", ["四川 (sìchuān): Tứ Xuyên", "州 (zhōu): tiểu bang"]],
+            ["川", "chuān", "Xuyên", "Sông", "nature", "Dòng sông chảy giữa hai bờ.", ["四川 (sìchuān): Tứ Xuyên", "河川 (héchuān): sông ngòi"]],
+            ["工", "gōng", "Công", "Công việc", "abstract", "Cái thước thợ, thợ thủ công.", ["工人 (gōngrén): công nhân", "工作 (gōngzuò): công việc"]],
+            ["己", "jǐ", "Kỷ", "Bản thân", "human", "Cái dây buộc hoặc chính mình.", ["自己 (zìjǐ): tự mình", "已知 (yǐzhī): đã biết"]],
+            ["巾", "jīn", "Cân", "Cái khăn", "object", "Vải treo trên giá.", ["手巾 (shǒujīn): khăn tay", "毛巾 (máojīn): khăn lông"]],
+            ["干", "gān", "Can", "Phạm đến", "abstract", "Cái mác hoặc sự khô ráo.", ["干净 (gānjìng): sạch sẽ", "干涉 (gānshè): can thiệp"]],
+            ["幺", "yāo", "Yêu", "Nhỏ nhắn", "abstract", "Sợi chỉ nhỏ li ti.", ["幼儿 (yòu'ér): ấu nhi", "幻 (huàn): ảo giác"]],
+            ["广", "guǎng", "Quảng", "Mái nhà rộng", "object", "Nhà dựa vào sườn núi.", ["广东 (guǎngdōng): Quảng Đông", "广告 (guǎnggào): quảng cáo"]],
+            ["廴", "yǐn", "Dẫn", "Đi xa", "abstract", "Bước chân dài di chuyển.", ["廷 (tíng): cung đình", "建 (jiàn): xây dựng"]],
+            ["廾", "gǒng", "Củng", "Chắp tay", "human", "Hai tay cùng nâng vật lên.", ["开 (kāi): mở", "弄 (nòng): làm/chơi"]],
+            ["弋", "yì", "Dặc", "Bắn cung", "object", "Cái cọc gỗ để bắn tên.", ["式 (shì): hình thức", "弑 (shì): giết vua"]],
+            ["弓", "gōng", "Cung", "Cái cung", "object", "Vũ khí bắn tên.", ["弹弓 (dàngōng): súng cao su", "张 (zhāng): trương/mở"]],
+            ["彡", "shān", "Tam", "Lông dài", "animal", "Vệt lông hoặc nét trang trí.", ["彩色 (cǎisè): màu sắc", "须 (xū): râu"]],
+            ["彳", "chì", "Xích", "Bước ngắn", "abstract", "Bước chân trái di chuyển.", ["很 (hěn): rất", "徐 (xú): từ từ"]],
+            ["心", "xīn", "Tâm", "Trái tim", "human", "Quả tim, suy nghĩ, tình cảm.", ["忠心 (zhōngxīn): lòng trung thành", "爱心 (àixīn): lòng nhân ái"]],
+            ["忄", "xīn", "Tâm đứng", "Trái tim", "human", "Biến thể bộ Tâm bên trái.", ["快乐 (kuàilè): vui vẻ", "性 (xìng): tính cách"]],
+            ["戈", "gē", "Qua", "Cây mác", "object", "Vũ khí cổ có lưỡi ngang.", ["战争 (zhànzhēng): chiến tranh", "或者 (huòzhě): hoặc là"]],
+            ["户", "hù", "Hộ", "Cửa", "object", "Cánh cửa một phía, hộ gia đình.", ["窗户 (chuānghu): cửa sổ", "户口 (hùkǒu): hộ khẩu"]],
+            ["手", "shǒu", "Thủ", "Tay", "human", "Bàn tay con người.", ["手指 (shǒuzhǐ): ngón tay", "手法 (shǒufǎ): thủ pháp"]],
+            ["扌", "shǒu", "Thủ (biến)", "Tay", "human", "Hành động liên quan đến tay.", ["打印 (dǎyìn): in ấn", "持有 (chíyǒu): nắm giữ"]],
+            ["支", "zhī", "Chi", "Cành cây", "plant", "Tay cầm cành cây.", ["支持 (zhīchí): ủng hộ", "支付 (zhīfù): chi trả"]],
+            ["攵", "pū", "Phẫu", "Đánh nhẹ", "abstract", "Tay cầm roi dạy dỗ.", ["教育 (jiàoyù): giáo dục", "攻 (gōng): tấn công"]],
+            ["文", "wén", "Văn", "Văn chương", "abstract", "Vết xăm hoặc vẻ đẹp chữ nghĩa.", ["文化 (wénhuà): văn hóa", "文学 (wénxué): văn học"]],
+            ["斗", "dǒu", "Đẩu", "Cái đấu", "object", "Dụng cụ đong lúa.", ["斗志 (dòuzhì): đấu chí", "科 (kē): khoa học"]],
+            ["斤", "jīn", "Cân", "Cái rìu", "object", "Rìu chặt gỗ, đơn vị trọng lượng.", ["公斤 (gōngjīn): cân (1kg)", "断 (duàn): đứt đoạn"]],
+            ["方", "fāng", "Phương", "Vuông", "abstract", "Hai chiếc thuyền ghép lại, phương hướng.", ["地方 (dìfāng): địa phương", "方向 (fāngxiàng): phương hướng"]],
+            ["无", "wú", "Vô", "Không có", "abstract", "Sự trống rỗng.", ["无线 (wúxiàn): không dây", "无法 (wúfǎ): không có cách nào"]],
+            ["日", "rì", "Nhật", "Mặt trời", "nature", "Hình mặt trời, thời gian ngày.", ["生日 (shēngrì): sinh nhật", "明天 (míngtiān): ngày mai"]],
+            ["曰", "yuē", "Viết", "Nói rằng", "human", "Miệng đang phát ra lời nói.", ["子曰 (zǐyuē): Khổng Tử nói", "书曰 (shūyuē): sách nói"]],
+            ["月", "yuè", "Nguyệt", "Mặt trăng", "nature", "Mặt trăng hoặc cơ thể (Nhục).", ["月亮 (yuèliang): mặt trăng", "肚子 (dùzi): cái bụng"]],
+            ["木", "mù", "Mộc", "Cây gỗ", "nature", "Cây có rễ và cành.", ["木头 (mùtou): gỗ", "森林 (sēnlín): rừng rậm"]],
+            ["欠", "qiàn", "Khiếm", "Thiếu thốn", "human", "Người há miệng ngáp.", ["歉意 (qiànyì): xin lỗi", "歌 (gē): bài hát"]],
+            ["止", "zhǐ", "Chỉ", "Dừng lại", "abstract", "Hình bàn chân đứng yên.", ["禁止 (jìnzhǐ): cấm", "截止 (jiézhǐ): hạn chót"]],
+            ["歹", "dǎi", "Đãi", "Xấu xa", "abstract", "Mảnh xương tàn, cái chết.", ["歹徒 (dǎitú): kẻ xấu", "死 (sǐ): chết"]],
+            ["殳", "shū", "Thù", "Binh khí", "object", "Tay cầm gậy dài để đánh.", ["段 (duàn): đoạn", "毅 (yì): nghị lực"]],
+            ["毋", "wú", "Vô", "Đừng", "abstract", "Sự ngăn cấm.", ["毋庸置疑 (wúyōngzhìyí): không nghi ngờ", "母 (mǔ): mẹ"]],
+            ["比", "bǐ", "Tỷ", "So sánh", "abstract", "hai người đứng cạnh nhau.", ["比例 (bǐlì): tỷ lệ", "比赛 (bǐsài): thi đấu"]],
+            ["毛", "máo", "Mao", "Lông", "animal", "Lông thú hoặc tóc.", ["毛笔 (máobǐ): bút lông", "羊毛 (yángmáo): lông cừu"]],
+            ["氏", "shì", "Thị", "Họ tên", "human", "Dòng họ, tầng lớp xã hội.", ["姓氏 (xìngshì): họ tên", "民 (mín): dân"]],
+            ["气", "qì", "Khí", "Hơi nước", "nature", "Làn khói, hơi thở.", ["空气 (kōngqì): không khí", "运气 (yùnqi): vận may"]],
+            ["水", "shuǐ", "Thủy", "Nước", "nature", "Dòng nước đang chảy.", ["水利 (shuǐlì): thủy lợi", "淡水 (dànshuǐ): nước ngọt"]],
+            ["氵", "shuǐ", "Thủy (biến)", "Nước", "nature", "Ba chấm nước.", ["海洋 (hǎiyáng): đại dương", "洗 (xǐ): rửa"]],
+            ["火", "huǒ", "Hỏa", "Lửa", "nature", "Ngọn lửa đang cháy.", ["火焰 (huǒyàn): ngọn lửa", "火车站 (huǒchēzhàn): ga tàu"]],
+            ["灬", "huǒ", "Hỏa (biến)", "Lửa", "nature", "Bốn chấm hỏa bên dưới.", ["热爱 (rè'ài): yêu tha thiết", "点 (diǎn): điểm/chút"]],
+            ["爪", "zhǎo", "Trảo", "Móng vuốt", "animal", "Móng tay hoặc vuốt thú.", ["爪子 (zhuǎzi): cái vuốt", "采 (cǎi): hái"]],
+            ["父", "fù", "Phụ", "Cha", "human", "Tay cầm roi (quyền uy gia đình).", ["父亲 (fùqīn): người cha", "爷爷 (yéye): ông nội"]],
+            ["爻", "yáo", "Hào", "Quẻ", "abstract", "Sự đan chéo, quẻ dịch.", ["爻辞 (yáocí): lời hào", "爽 (shuǎng): sảng khoái"]],
+            ["爿", "qiáng", "Tường", "Mảnh ván", "object", "Nửa bên trái của khúc gỗ.", ["墙 (qiáng): bức tường", "壮 (zhuàng): mạnh khỏe"]],
+            ["片", "piàn", "Phiến", "Mảnh mỏng", "object", "Nửa bên phải của khúc gỗ.", ["照片 (zhàopiàn): bức ảnh", "卡片 (kǎpiàn): tấm thẻ"]],
+            ["牙", "yá", "Nha", "Răng", "human", "Răng nanh của động vật.", ["牙齿 (yáchǐ): răng", "刷牙 (shuāyá): đánh răng"]],
+            ["牛", "niú", "Ngưu", "Con trâu", "animal", "Đầu con trâu có sừng.", ["牛奶 (niúnǎi): sữa bò", "黄牛 (huángniú): trâu vàng"]],
+            ["犬", "quǎn", "Khuyển", "Con chó", "animal", "Hình dáng con chó.", ["警犬 (jǐngquǎn): chó nghiệp vụ", "猎犬 (lièquǎn): chó săn"]],
+            ["犭", "quǎn", "Khuyển (biến)", "Thú", "animal", "Thú bốn chân.", ["猫 (māo): con mèo", "狗 (gǒu): con chó"]],
+            ["玄", "xuán", "Huyền", "Màu đen", "nature", "Sự sâu thẳm, huyền bí.", ["玄学 (xuánxué): huyền học", "率 (lǜ): tỷ lệ"]],
+            ["玉", "yù", "Ngọc", "Đá quý", "nature", "Xâu chuỗi hạt ngọc.", ["珠宝 (zhūbǎo): châu báu", "王 (wáng): vua"]],
+            ["瓜", "guā", "Qua", "Quả dưa", "plant", "Dây leo và trái dưa.", ["西瓜 (xīguā): dưa hấu", "瓜子 (guāzǐ): hạt dưa"]],
+            ["瓦", "wǎ", "Ngói", "Đồ gốm", "object", "Mảnh ngói lợp nhà.", ["瓦片 (wǎpiàn): mảnh ngói", "瓶 (píng): cái bình"]],
+            ["甘", "gān", "Cam", "Ngọt", "abstract", "Vị ngọt trong miệng.", ["甜美 (tiánměi): ngọt ngào", "甘心 (gānxīn): cam tâm"]],
+            ["生", "shēng", "Sinh", "Sống", "abstract", "Mầm cây mọc khỏi đất.", ["生活 (shēnghuó): cuộc sống", "产生 (chǎnshēng): sản sinh"]],
+            ["用", "yòng", "Dụng", "Sử dụng", "abstract", "Cái thùng dùng để múc nước.", ["使用 (shǐyòng): sử dụng", "用心 (yòngxīn): để tâm"]],
+            ["田", "tián", "Điền", "Ruộng", "nature", "Thửa ruộng vuông vức.", ["田野 (tiányě): đồng ruộng", "农田 (nóngtián): ruộng nông"]],
+            ["疋", "pǐ", "Sơ", "Cuộn vải", "object", "Đơn vị đo vải, cái chân.", ["疑 (yí): nghi ngờ", "疏 (shū): sơ sài"]],
+            ["疒", "nè", "Nạch", "Bệnh tật", "abstract", "Người nằm trên giường bệnh.", ["生病 (shēngbìng): bị bệnh", "痛 (tòng): đau"]],
+            ["癶", "bō", "Bát", "Gạt ra", "abstract", "Hai chân xòe ra khi leo núi.", ["登山 (dēngshān): leo núi", "出发 (chūfā): xuất phát"]],
+            ["白", "bái", "Bạch", "Màu trắng", "nature", "Ánh sáng mặt trời, sự sạch sẽ.", ["白色 (báisè): màu trắng", "白菜 (báicài): cải trắng"]],
+            ["皮", "pí", "Bì", "Da dẻ", "human", "Tay đang lột da thú.", ["皮肤 (pífū): da", "皮鞋 (píxié): giày da"]],
+            ["皿", "mǐn", "Mãnh", "Bát đĩa", "object", "Dụng cụ đựng thức ăn.", ["盆 (pén): cái bồn", "盘子 (pánzi): cái đĩa"]],
+            ["目", "mù", "Mục", "Con mắt", "human", "Hình con mắt.", ["目光 (mùguāng): ánh mắt", "目的 (mùdì): mục đích"]],
+            ["矛", "máo", "Mâu", "Cây giáo", "object", "Vũ khí nhọn có cán dài.", ["矛盾 (máodùn): mâu thuẫn", "矛头 (máotóu): mũi nhọn"]],
+            ["矢", "shǐ", "Thỉ", "Mũi tên", "object", "Mũi tên đang bắn đi.", ["矢量 (shǐliàng): đại lượng vector", "短 (duǎn): ngắn"]],
+            ["石", "shí", "Thạch", "Đá", "nature", "Tảng đá dưới vách núi.", ["石头 (shítou): hòn đá", "石油 (shíyóu): dầu mỏ"]],
+            ["示", "shì", "Thị", "Chỉ bảo", "abstract", "Bàn thờ, sự cúng bái.", ["表示 (biǎoshì): biểu lộ", "祭祀 (jìsì): tế lễ"]],
+            ["礻", "shì", "Thị (biến)", "Tâm linh", "abstract", "Biến thể bộ Thị bên trái.", ["祝福 (zhùfú): chúc phúc", "礼品 (lǐpǐn): lễ vật"]],
+            ["禸", "róu", "Nhựu", "Dấu chân", "animal", "Vết chân của dã thú.", ["禹 (yǔ): vua Vũ", "禽 (qín): cầm thú"]],
+            ["禾", "hé", "Hòa", "Lúa", "plant", "Cây lúa trĩu bông.", ["禾苗 (hémiáo): mầm lúa", "秋天 (qiūtiān): mùa thu"]],
+            ["穴", "xué", "Huyệt", "Hang động", "nature", "Cái hốc, hang sâu.", ["空 (kōng): trống rỗng", "穿 (chuān): mặc áo"]],
+            ["立", "lì", "Lập", "Đứng thẳng", "human", "Người đứng vững trên đất.", ["建立 (jiànlì): thành lập", "独立 (dúlì): độc lập"]],
+            ["竹", "zhú", "Trúc", "Cây tre", "plant", "Lá tre rủ xuống.", ["竹子 (zhúzi): cây tre", "筷子 (kuàizi): đôi đũa"]],
+            ["米", "mǐ", "Mễ", "Gạo", "plant", "Hạt lúa, hạt gạo.", ["大米 (dàmǐ): gạo tẻ", "粉 (fěn): phấn/bột"]],
+            ["糸", "mì", "Mịch", "Tơ lụa", "object", "Sợi tơ đan vào nhau.", ["细节 (xìjié): chi tiết", "组织 (zǔzhī): tổ chức"]],
+            ["纟", "mì", "Mịch (biến)", "Tơ lụa", "object", "Bộ Mịch giản thể.", ["线 (xiàn): sợi dây", "给 (gěi): cho"]],
+            ["缶", "fǒu", "Phẫu", "Vò đất", "object", "Đồ gốm đựng rượu.", ["缶 (fǒu): đồ đất", "缺 (quē): thiếu"]],
+            ["网", "wǎng", "Võng", "Cái lưới", "object", "Lưới đánh cá.", ["上网 (shàngwǎng): lên mạng", "渔网 (yúwǎng): lưới đánh cá"]],
+            ["羊", "yáng", "Dương", "Con dê", "animal", "Hình con dê có sừng.", ["羊肉 (yángròu): thịt dê", "群 (qún): bầy đàn"]],
+            ["羽", "yǔ", "Vũ", "Lông chim", "animal", "Hai chiếc lông vũ.", ["羽毛 (yǔmáo): lông chim", "学习 (xuéxí): học tập"]],
+            ["老", "lǎo", "Lão", "Người già", "human", "Người tóc dài chống gậy.", ["老师 (lǎoshī): giáo viên", "老人 (lǎorén): người già"]],
+            ["而", "ér", "Nhi", "Và/Nhưng", "abstract", "Chùm râu cằm.", ["而且 (érqiě): vả lại", "然而 (rán'ér): tuy nhiên"]],
+            ["耒", "lěi", "Lỗi", "Cái cày", "object", "Công cụ làm ruộng gỗ.", ["耕地 (gēngdì): cày ruộng", "耗 (hào): hao tốn"]],
+            ["耳", "ěr", "Nhĩ", "Tai", "human", "Cái lỗ tai.", ["耳朵 (ěrduo): lỗ tai", "听 (tīng): nghe"]],
+            ["聿", "yù", "Duật", "Cây bút", "object", "Tay cầm bút lông.", ["律 (lǜ): quy luật", "书 (shū): sách"]],
+            ["肉", "ròu", "Nhục", "Thịt", "human", "Miếng thịt tươi.", ["牛肉 (niúròu): thịt bò", "肥 (féi): béo"]],
+            ["臣", "chén", "Thần", "Bề tôi", "human", "Người hầu quỳ gối.", ["大臣 (dàchén): đại thần", "卧 (wò): nằm"]],
+            ["自", "zì", "Tự", "Bản thân", "human", "Cái mũi (chỉ mình).", ["自己 (zìjǐ): tự mình", "自由 (zìyóu): tự do"]],
+            ["至", "zhì", "Chí", "Đến nơi", "abstract", "Mũi tên rơi xuống đất.", ["至于 (zhìyú): cho đến mức", "甚至 (shènzhì): thậm chí"]],
+            ["臼", "jiù", "Cữu", "Cái cối", "object", "Dụng cụ giã gạo.", ["舅舅 (jiùjiu): cậu", "插 (chā): cắm vào"]],
+            ["舌", "shé", "Thiệt", "Cái lưỡi", "human", "Lưỡi thò ra từ miệng.", ["舌头 (shétou): cái lưỡi", "辞职 (cízhí): từ chức"]],
+            ["舛", "chuǎn", "Suyễn", "Sai suyển", "abstract", "Hai chân ngược nhau.", ["舞 (wǔ): nhảy múa", "舜 (shùn): vua Thuấn"]],
+            ["舟", "zhōu", "Chu", "Thuyền", "object", "Hình con thuyền nhỏ.", ["小舟 (xiǎozhōu): con thuyền nhỏ", "船舶 (chuánbó): tàu bè"]],
+            ["艮", "gèn", "Cấn", "Bền vững", "abstract", "Quẻ cấn, sự dừng lại.", ["很好 (hěnhǎo): rất tốt", "退 (tuì): rút lui"]],
+            ["色", "sè", "Sắc", "Màu sắc", "nature", "Sắc thái, vẻ mặt.", ["红色 (hóngsè): màu đỏ", "脸色 (liǎnsè): vẻ mặt"]],
+            ["艹", "cǎo", "Thảo", "Cỏ", "plant", "Bộ Thảo trên đầu.", ["草 (cǎo): cỏ", "茶叶 (cháyè): lá trà"]],
+            ["虍", "hū", "Hô", "Vằn hổ", "animal", "Lớp da vằn của hổ.", ["老虎 (lǎohǔ): con hổ", "虑 (lǜ): lo lắng"]],
+            ["虫", "chóng", "Trùng", "Sâu bọ", "animal", "Côn trùng, rắn rết.", ["昆虫 (kūnchóng): côn trùng", "蛇 (shé): con rắn"]],
+            ["血", "xuè", "Huyết", "Máu", "human", "Máu trong bát tế lễ.", ["血液 (xuèyè): huyết dịch", "鲜血 (xiānxuè): máu tươi"]],
+            ["行", "xíng", "Hành", "Đi lại", "abstract", "Ngã tư đường.", ["行业 (hángyè): ngành nghề", "行政 (xíngzhèng): hành chính"]],
+            ["衣", "yì", "Y", "Áo", "object", "Cái áo mặc ngoài.", ["衣服 (yīfu): quần áo", "裁 (cái): cắt may"]],
+            ["衤", "yì", "Y (biến)", "Áo", "object", "Biến thể bộ Y bên trái.", ["衬衫 (chènshān): áo sơ mi", "裤子 (kùzi): cái quần"]],
+            ["襾", "yà", "Á", "Che đậy", "object", "Cái nắp che.", ["覆盖 (fùgài): che phủ", "要 (yào): muốn"]],
+            ["见", "jiàn", "Kiến", "Trông thấy", "human", "Mắt người nhìn vật.", ["见面 (jiànmiàn): gặp mặt", "观点 (guāndiǎn): quan điểm"]],
+            ["角", "jiǎo", "Giác", "Sừng", "animal", "Cái sừng thú.", ["三角形 (sānjiǎoxíng): hình tam giác", "角度 (jiǎodù): góc độ"]],
+            ["言", "yán", "Ngôn", "Nói", "human", "Lời nói ra.", ["语言 (yǔyán): ngôn ngữ", "警言 (jǐngyán): lời cảnh báo"]],
+            ["讠", "yán", "Ngôn (biến)", "Nói", "human", "Bộ Ngôn giản thể.", ["说话 (shuōhuà): nói chuyện", "语言 (yǔyán): ngôn ngữ"]],
+            ["谷", "gǔ", "Cốc", "Thung lũng", "nature", "Nước chảy từ hang ra.", ["山谷 (shāngǔ): thung lũng", "谷物 (gǔwù): ngũ cốc"]],
+            ["豆", "dòu", "Đậu", "Hạt đậu", "plant", "Cái chén đựng đậu.", ["大豆 (dàdòu): đậu nành", "豆浆 (dòujiāng): sữa đậu"]],
+            ["豕", "shǐ", "Thỉ", "Con lợn", "animal", "Hình con heo.", ["野豕 (yěshǐ): lợn rừng", "豪 (háo): hào hoa"]],
+            ["豸", "zhì", "Trị", "Loài thú", "animal", "Thú chân không móng.", ["豹 (bào): con báo", "豺 (chái): con sói"]],
+            ["贝", "bèi", "Bối", "Vỏ sò", "animal", "Vỏ sò, tiền tệ cổ.", ["宝贝 (bǎobèi): bảo bối", "贸易 (màoyì): mậu dịch"]],
+            ["赤", "chì", "Xích", "Màu đỏ", "nature", "Lửa đốt rực rỡ.", ["红色 (hóngsè): màu đỏ", "赤道 (chìdào): xích đạo"]],
+            ["走", "zǒu", "Tẩu", "Đi chạy", "abstract", "Người đang bước đi.", ["走路 (zǒulù): đi bộ", "跑 (pǎo): chạy"]],
+            ["足", "zú", "Túc", "Cái chân", "human", "Bàn chân người.", ["足球 (zúqiú): bóng đá", "不足 (bùzú): không đủ"]],
+            ["身", "shēn", "Thân", "Thân mình", "human", "Cơ thể con người.", ["身体 (shēntǐ): thân thể", "身边 (shēnbiān): bên cạnh"]],
+            ["车", "chē", "Xa", "Cái xe", "object", "Xe có bánh và trục.", ["汽车 (qìchē): xe hơi", "车站 (chēzhàn): bến xe"]],
+            ["辛", "xīn", "Tân", "Cay đắng", "abstract", "Kim đâm, nỗi đau.", ["辛苦 (xīnkǔ): vất vả", "辣 (là): cay"]],
+            ["辰", "chén", "Thần", "Thì/Giờ", "abstract", "Con rồng hoặc thời gian.", ["星辰 (xīngchén): tinh tú", "晨 (chén): buổi sáng"]],
+            ["辶", "chuò", "Sước", "Chợt đi", "abstract", "Sự di chuyển trên đường.", ["进步 (jìnbù): tiến bộ", "过去 (guòqù): quá khứ"]],
+            ["酉", "yǒu", "Dậu", "Rượu", "object", "Bình rượu lâu năm.", ["酒精 (jiǔjīng): cồn", "酿造 (niàngzào): nấu rượu"]],
+            ["里", "lǐ", "Lý", "Dặm/Làng", "nature", "Ruộng và đất.", ["公里 (gōnglǐ): km", "里外 (lǐwài): trong ngoài"]],
+            ["金", "jīn", "Kim", "Vàng", "nature", "Kim loại quý giá.", ["金色 (jīnsè): màu vàng", "资金 (zījīn): tiền vốn"]],
+            ["钅", "jīn", "Kim (biến)", "Kim loại", "nature", "Bộ Kim giản thể.", ["铁 (tiě): sắt", "银 (yín): bạc"]],
+            ["长", "cháng", "Trường", "Dài", "abstract", "Người tóc dài.", ["长期 (chángqī): lâu dài", "长大 (zhǎngdà): trưởng thành"]],
+            ["门", "mén", "Môn", "Cửa", "object", "Cánh cửa hai bên.", ["门窗 (ménchuāng): cửa sổ", "问 (wèn): hỏi"]],
+            ["邑", "yì", "Ấp", "Thành thị", "nature", "Vùng đất có người ở.", ["都 (dū): đô thị", "邻居 (邻居): hàng xóm"]],
+            ["阜", "fù", "Phụ", "Gò đất", "nature", "Núi đất nhấp nhô.", ["阿 (ā): a", "院 (yuàn): viện"]],
+            ["阝", "fù", "Phụ (biến)", "Đất/ấp", "nature", "Biến thể của 阜 (bên trái) hoặc 邑 (bên phải).", ["队 (duì): đội", "都 (dū): đô"]],
+            ["隹", "zhuī", "Chuy", "Chim đuôi ngắn", "animal", "Loài chim nhỏ.", ["雕 (diāo): chim điêu", "难 (nán): khó khăn"]],
+            ["雨", "yǔ", "Vũ", "Mưa", "nature", "Mưa rơi từ trên trời.", ["雨衣 (yǔyī): áo mưa", "雪 (xuě): tuyết"]],
+            ["青", "qīng", "Thanh", "Màu xanh", "nature", "Màu của cây cỏ.", ["青年 (qīngnián): thanh niên", "清结 (qīngjié): sạch sẽ"]],
+            ["非", "fēi", "Phi", "Sai trái", "abstract", "Hai bên trái ngược nhau.", ["非法 (fēifǎ): phi pháp", "非洲 (fēizhōu): Châu Phi"]],
+            ["面", "miàn", "Diện", "Mặt", "human", "Khuôn mặt con người.", ["面子 (miànzi): thể diện", "后面 (hòumiàn): phía sau"]],
+            ["革", "gé", "Cách", "Da thú", "animal", "Da đã thuộc, thay đổi.", ["革命 (gémìng): cách mạng", "皮革 (pígé): da thuộc"]],
+            ["韦", "wéi", "Vi", "Da cứng", "animal", "Da bao quanh.", ["伟 (wěi): vĩ đại", "韧 (rèn): dai"]],
+            ["韭", "jiǔ", "Cửu", "Rau hẹ", "plant", "Cây rau hẹ.", ["韭菜 (jiǔcài): rau hẹ", "韭黄 (jiǔhuáng): hẹ vàng"]],
+            ["音", "yīn", "Âm", "Âm thanh", "abstract", "Tiếng phát ra từ miệng.", ["音乐 (yīnyuè): âm nhạc", "拼音 (pīnyīn): phiên âm"]],
+            ["页", "yè", "Hiệp", "Trang giấy", "object", "Cái đầu hoặc trang giấy.", ["页码 (yèmǎ): số trang", "须 (xū): phải"]],
+            ["风", "fēng", "Phong", "Gió", "nature", "Luồng không khí thổi.", ["台风 (táifēng): bão", "风格 (fēnggé): phong cách"]],
+            ["飞", "fēi", "Phi", "Bay", "abstract", "Chim đang tung cánh.", ["飞机 (fēijī): máy bay", "飞快 (fēikuài): nhanh như bay"]],
+            ["食", "shí", "Thực", "Ăn", "abstract", "Thức ăn, việc ăn.", ["食物 (shíwù): thức ăn", "餐厅 (cāntīng): nhà hàng"]],
+            ["饣", "shí", "Thực (biến)", "Ăn", "abstract", "Bộ Thực giản thể.", ["饱 (bǎo): no", "饺子 (jiǎozi): bánh chẻo"]],
+            ["首", "shǒu", "Thủ", "Đầu", "human", "Cái đầu con người.", ["首先 (shǒuxiān): trước tiên", "首都 (shǒudū): thủ đô"]],
+            ["香", "xiāng", "Hương", "Mùi thơm", "nature", "Mùi thơm của lúa.", ["香水 (xiāngshuǐ): nước hoa", "香港 (xiānggǎng): Hồng Kông"]],
+            ["马", "mǎ", "Mã", "Con ngựa", "animal", "Con ngựa có bờm dài.", ["马上 (mǎshàng): ngay lập tức", "奔马 (bēnmǎ): ngựa phi"]],
+            ["骨", "gǔ", "Cốt", "Xương", "human", "Bộ khung xương.", ["骨头 (gǔtou): xương", "脊梁 (jǐliáng): xương sống"]],
+            ["高", "gāo", "Cao", "Cao ráo", "abstract", "Tòa lầu cao.", ["高兴 (gāoxìng): vui vẻ", "高级 (gāojí): cao cấp"]],
+            ["髟", "biāo", "Tiêu", "Tóc dài", "human", "Tóc buông xõa.", ["鬓 (bìn): tóc mai", "髯 (rán): râu"]],
+            ["鬼", "guǐ", "Quỷ", "Con quỷ", "abstract", "Linh hồn, người chết.", ["魔鬼 (móguǐ): ma quỷ", "魂 (hún): linh hồn"]],
+            ["鱼", "yú", "Ngư", "Con cá", "animal", "Hình con cá.", ["金鱼 (jīnyú): cá vàng", "鲜鱼 (xiānyú): cá tươi"]],
+            ["鸟", "niǎo", "Điểu", "Con chim", "animal", "Chim đuôi dài.", ["小鸟 (xiǎoniǎo): con chim nhỏ", "鸵鸟 (tuóniǎo): đà điểu"]],
+            ["卤", "lǔ", "Lỗ", "Đất mặn", "nature", "Muối, độ mặn.", ["卤味 (lǔwèi): món kho", "咸 (xián): mặn"]],
+            ["鹿", "lù", "Lộc", "Con hươu", "animal", "Hình con hươu rừng.", ["鹿肉 (lùròu): thịt hươu", "麒麟 (qílín): kỳ lân"]],
+            ["麦", "mài", "Mạch", "Lúa mạch", "plant", "Cây lúa mạch.", ["麦片 (màipiàn): yến mạch", "小麦 (xiǎomài): tiểu mạch"]],
+            ["麻", "má", "Ma", "Cây gai", "plant", "Sợi gai, sự tê dại.", ["麻木 (mámù): tê dại", "麻烦 (máfán): phiền phức"]],
+            ["黄", "huáng", "Hoàng", "Màu vàng", "nature", "Màu của đất đai.", ["黄色 (huángsè): màu vàng", "黄瓜 (huángguā): dưa chuột"]],
+            ["黍", "shǔ", "Thử", "Cây kê", "plant", "Lúa kê nếp.", ["黍子 (shǔzi): cây kê", "黏 (nián): dính"]],
+            ["黑", "hēi", "Hắc", "Màu đen", "nature", "Màu khói bếp.", ["黑色 (hēisè): màu đen", "黑暗 (hēi'àn): bóng tối"]],
+            ["黾", "mǐn", "Mãnh", "Ếch nhái", "animal", "Con ếch, sự cố gắng.", ["渑 (miǎn): tên đất", "鼋 (yuán): con rùa lớn"]],
+            ["鼎", "dǐng", "Đỉnh", "Cái đỉnh", "object", "Đồ đồng ba chân cực quý.", ["鼎力 (dǐnglì): dốc sức", "鼎鼎大名 (dǐngdǐngdàmíng): lừng danh"]],
+            ["鼓", "gǔ", "Cổ", "Cái trống", "object", "Dụng cụ gõ nhạc.", ["鼓掌 (gǔzhǎng): vỗ tay", "鼓舞 (gǔwǔ): cổ vũ"]],
+            ["鼠", "shǔ", "Thử", "Con chuột", "animal", "Hình con chuột.", ["松鼠 (sōngshǔ): sóc", "老鼠 (lǎoshǔ): con chuột"]],
+            ["鼻", "bí", "Tị", "Cái mũi", "human", "Cái mũi để thở.", ["鼻孔 (bíkǒng): lỗ mũi", "鼻涕 (bítì): nước mũi"]],
+            ["齐", "qí", "Tề", "Bằng nhau", "abstract", "Sự ngay ngắn, đồng đều.", ["整齐 (zhěngqí): ngay ngắn", "齐全 (qíquán): đầy đủ"]],
+            ["齿", "chǐ", "Xỉ", "Răng", "human", "Răng miệng.", ["牙齿 (yáchǐ): răng", "齿轮 (chǐlún): bánh răng"]],
+            ["龙", "lóng", "Long", "Con rồng", "animal", "Linh vật huyền thoại.", ["龙舟 (lóngzhōu): thuyền rồng", "巨龙 (jùlóng): rồng khổng lồ"]],
+            ["龟", "guī", "Quy", "Con rùa", "animal", "Con rùa, sự trường thọ.", ["乌龟 (wūguī): con rùa", "龟裂 (jūnliè): nứt nẻ"]],
+            ["龠", "yuè", "Dược", "Cái sáo", "object", "Nhạc khí nhiều ống.", ["吹龠 (chuīyuè): thổi sáo", "龠 (yuè): ống sáo cổ"]]
+        ];
+
+        const radicals = radicalsRaw.map(r => ({
+            char: r[0], pinyin: r[1], hv: r[2], mean: r[3], cat: r[4], desc: r[5], examples: r[6]
+        }));
+
+        let writer = null;
+        let filter = 'all';
+
+        function setFilter(f) {
+            filter = f;
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${f}`).classList.add('active');
+            render();
+        }
+
+        function render() {
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = '';
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            const items = radicals.filter(r => {
+                const matchSearch = r.char.includes(search) || r.hv.toLowerCase().includes(search) || r.mean.toLowerCase().includes(search);
+                const matchCat = filter === 'all' || r.cat === filter;
+                return matchSearch && matchCat;
+            });
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-card p-6 text-center cursor-pointer flex flex-col items-center justify-center";
+                card.onclick = () => openModal(item);
+                card.innerHTML = `
+                    <span class="text-5xl hanzi-font mb-4 text-slate-800">${item.char}</span>
+                    <span class="text-sm font-black text-rose-500 uppercase tracking-widest">${item.hv}</span>
+                    <span class="text-xs text-slate-400 font-bold truncate w-full mt-1">${item.mean}</span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openModal(item) {
+            document.getElementById('mPinyin').innerText = item.pinyin;
+            document.getElementById('mHV').innerText = item.hv;
+            document.getElementById('mMean').innerText = item.mean;
+            document.getElementById('mDesc').innerText = item.desc;
+            
+            const exDiv = document.getElementById('mExamples');
+            exDiv.innerHTML = '';
+            item.examples.forEach(ex => {
+                // Tách chữ Hán và phần giải thích
+                const parts = ex.split(' (');
+                const charPart = parts[0];
+                const restPart = parts[1] ? `(${parts[1]}` : '';
+
+                const tag = document.createElement('div');
+                tag.className = "example-tag";
+                tag.innerHTML = `<span class="example-char">${charPart}</span><span>${restPart}</span>`;
+                exDiv.appendChild(tag);
+            });
+
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('writer-target').innerHTML = '';
+            
+            writer = HanziWriter.create('writer-target', item.char, {
+                width: 180, height: 180, padding: 0,
+                strokeColor: '#f43f5e', outlineColor: '#fff1f2',
+                radicalColor: '#10b981'
+            });
+            writer.animateCharacter();
+
+            document.getElementById('btnCharSpeak').onclick = () => {
+                const ut = new SpeechSynthesisUtterance(item.char);
+                ut.lang = 'zh-CN';
+                window.speechSynthesis.speak(ut);
+            };
+        }
+
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+        const filterBox = document.getElementById('catFilter');
+        Object.entries(categories).forEach(([id, label]) => {
+            const btn = document.createElement('button');
+            btn.id = `btn-${id}`;
+            btn.className = "category-pill border-2 border-rose-50 bg-white shadow-sm whitespace-nowrap hover:bg-rose-50";
+            btn.innerText = label;
+            btn.onclick = () => setFilter(id);
+            filterBox.appendChild(btn);
+        });
+
+        render();
+    </script>
+</body>
+</html>
